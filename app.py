@@ -6,16 +6,15 @@ from azure.ai.inference.models import SystemMessage, UserMessage, AssistantMessa
 from azure.core.credentials import AzureKeyCredential
 import re
 
-
 load_dotenv()
 
-app = Flask(__name__)
-app.secret_key = 'your_secret_key_here' 
+# Tell Flask to look for templates in the current directory
+app = Flask(__name__, template_folder='.')
 
+app.secret_key = 'your_secret_key_here'
 
 def format_ai_response(text):
     return re.sub(r'\*\*(.*?)\*\*', r'<strong>\1</strong>', text)
-
 
 def is_education_related(text):
     keywords = [
@@ -25,10 +24,8 @@ def is_education_related(text):
     text_lower = text.lower()
     return any(keyword in text_lower for keyword in keywords) or "?" in text
 
-
 AZURE_KEY = os.getenv("GITHUB_TOKEN")
 AZURE_ENDPOINT = "https://models.inference.ai.azure.com"
-
 
 client = ChatCompletionsClient(
     endpoint=AZURE_ENDPOINT,
